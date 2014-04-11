@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCassette", "NCassette\NCassette.csproj", "{D65E9534-8F77-46AD-9EEB-F3475A17A47D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCassetteSandbox", "NCassetteSandbox\NCassetteSandbox.csproj", "{FC7982AB-63DF-4136-B227-3FFB52FD0DEF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCassetteTests", "NCassetteTests\NCassetteTests.csproj", "{B31CC726-2B74-4859-9C5C-64C2BF6F2CCF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D65E9534-8F77-46AD-9EEB-F3475A17A47D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D65E9534-8F77-46AD-9EEB-F3475A17A47D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D65E9534-8F77-46AD-9EEB-F3475A17A47D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D65E9534-8F77-46AD-9EEB-F3475A17A47D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC7982AB-63DF-4136-B227-3FFB52FD0DEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC7982AB-63DF-4136-B227-3FFB52FD0DEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC7982AB-63DF-4136-B227-3FFB52FD0DEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC7982AB-63DF-4136-B227-3FFB52FD0DEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B31CC726-2B74-4859-9C5C-64C2BF6F2CCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B31CC726-2B74-4859-9C5C-64C2BF6F2CCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B31CC726-2B74-4859-9C5C-64C2BF6F2CCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B31CC726-2B74-4859-9C5C-64C2BF6F2CCF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
