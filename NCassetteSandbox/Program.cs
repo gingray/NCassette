@@ -14,7 +14,11 @@ namespace NCassetteSandbox
         {
             var x = "1231";
             var result = NCassette.NCassette.Record(() => new StoreItem<CustomClass>(new CustomClass(), DateTime.Now))
-                .SerializeWayJson().SetLifeTime(c => c.DateTime < DateTime.Now).StorageInTempFiles().Execute();
+                .SerializeWayJson()
+                .PleaseWorkInRealeseMode()
+                .SetLifeTime(c => c.DateTime < DateTime.Now)
+                .StorageInTempFiles()
+                .Execute();
 
             Console.WriteLine("{0} {1} now: {2}", result.MainObject, result.DateTime, DateTime.Now);
             Console.WriteLine("Done");

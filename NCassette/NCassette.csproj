@@ -42,6 +42,8 @@
   <ItemGroup>
     <Compile Include="Common\NRecord.cs" />
     <Compile Include="Common\StoreItem.cs" />
+    <Compile Include="Exceptions\NCassetteConfigureException.cs" />
+    <Compile Include="Exceptions\WorkInReleaseModeException.cs" />
     <Compile Include="NCassette.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialize\BinarySerializer.cs" />

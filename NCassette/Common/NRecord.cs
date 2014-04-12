@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
+using NCassette.Exceptions;
 using NCassette.Serialize;
 using NCassette.Storage;
 
@@ -17,10 +21,22 @@ namespace NCassette.Common
         private int _numToExecute = 1;
         private Action<Exception> _callbackOnFailExecution;
         private Func<T, bool> _needToUpdateObject;
+        private bool _canWorkInReleaseMode;
+        private static DebuggableAttribute _debuggableAttribute;
+
+        static NRecord()
+        {
+            var ret = Assembly.GetCallingAssembly().GetCustomAttributes(typeof(DebuggableAttribute), true);
+            if (ret.Length > 0)
+            {
+                _debuggableAttribute = (DebuggableAttribute)ret[0];
+            }
+        }
 
         public NRecord(Func<T> createFunction)
         {
             _createFunction = createFunction;
+            _canWorkInReleaseMode = false;
             _dependsObjects = new List<object>();
         }
 
@@ -73,8 +89,16 @@ namespace NCassette.Common
             return this;
         }
 
+        public NRecord<T> PleaseWorkInRealeseMode()
+        {
+            _canWorkInReleaseMode = true;
+            return this;
+        } 
+
         public T Execute()
         {
+            CheckMinimalRequirements();
+            CheckDebugMode();
             var mainName = string.Format("{0}.{1}.{2}", _createFunction.Method.DeclaringType.FullName, _createFunction.Method.Name, _serialize.GetType().ToString());
             var line = _dependsObjects.Aggregate(mainName, (acc, item) => acc + item.ToString());
             var hash = Hash.CalculateHash(line);
@@ -123,6 +147,31 @@ namespace NCassette.Common
             var binData = _serialize.Serialize(result);
             _storage.PutIntoStorage(binData, hash);
             return result;
+        }
+
+        private void CheckDebugMode()
+        {
+            if (_debuggableAttribute != null)
+            {
+                if(_debuggableAttribute.IsJITTrackingEnabled)
+                    return;
+                if(!_debuggableAttribute.IsJITTrackingEnabled && _canWorkInReleaseMode)
+                    return;
+            }
+            throw new WorkInReleaseModeException("You use NCassette in Realese assembly without explicit permisions");
+        }
+
+        private void CheckMinimalRequirements()
+        {
+            if (_serialize == null)
+            {
+                throw new NCassetteConfigureException("You need to set serialization way in NCassette it's required");
+            }
+
+            if (_storage == null)
+            {
+                throw new NCassetteConfigureException("You need to set storage way in NCassette it's required");
+            }
         }
     }
 }
