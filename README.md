@@ -35,3 +35,5 @@ Example below:
 
 The code in lambda wil execute only once all other calls will be cached.
 
+Available on NuGet: Install-Package NCassette
+
