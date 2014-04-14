@@ -17,19 +17,29 @@ namespace NCassetteSandbox
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            var x = "1231";
-            var result = NCassette.Record(() => new StoreItem<CustomClass>(new CustomClass(), DateTime.Now))
+            var url = "http://google.com";
+            var result = NCassette.Record(() =>
+            {
+                //some very heavy manipulation here
+                var networkRespone = NetworkResponse();
+                var someClass = new CustomClass {SomeStringProperty = networkRespone};
+                return someClass;
+            })
                 .SerializeWayJson()
                 .WorkInReleaseMode()
-                .DependsOn(x)
-                .SetLifeTime(c => c.DateTime < DateTime.Now)
+                .DependsOn(url)
                 .StorageInTempFiles()
                 .Execute();
 
-            Console.WriteLine("{0} {1} now: {2}", result.MainObject, result.DateTime, DateTime.Now);
+            Console.WriteLine("{0}", result.SomeStringProperty);
             Console.WriteLine("Done");
             Console.ReadLine();
 
+        }
+
+        private static string NetworkResponse()
+        {
+            return "Some network response";
         }
     }
 }
