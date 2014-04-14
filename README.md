@@ -4,8 +4,9 @@ NCassette
 NCassette its a tool specially for debugging purposes but u can use it how ever u want.
 It can helps to 'mock' or 'caching' heavy parts of ur algorithms during debugging.
 
-An attempt to create some kind of VCR in Ruby or Betamax in Java, but main idea not quite the same
-lib record the answer from service not trying to intercept the connection or something like that.
+An attempt to create some kind of C# alternative of Ruby VCR or C# alternative Java Betamax,
+but main idea not quite the same lib record the answer from service not trying to intercept the connection or something like that.
+
 Thats mean that ucan record not only some network manipulation but what ever u want and its very simple
 and light weigth, no additional dependencies.
 Example below:
