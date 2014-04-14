@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 
-namespace NCassette.Exceptions
+namespace NCassetteLib.Exceptions
 {
     [Serializable]
     public class WorkInReleaseModeException : Exception

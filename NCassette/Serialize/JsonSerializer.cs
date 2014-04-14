@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Runtime.Serialization.Json;
-using System.Text;
 
-namespace NCassette.Serialize
+namespace NCassetteLib.Serialize
 {
     public class JsonSerializer<T> : ISerialize<T>
     {

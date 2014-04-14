@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
-using NCassette.Common;
+using NCassetteLib.Common;
 
-namespace NCassette
+namespace NCassetteLib
 {
     public static class NCassette
     {

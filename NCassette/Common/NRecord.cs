@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using NCassette.Exceptions;
-using NCassette.Serialize;
-using NCassette.Storage;
+using NCassetteLib.Exceptions;
+using NCassetteLib.Serialize;
+using NCassetteLib.Storage;
 
-namespace NCassette.Common
+namespace NCassetteLib.Common
 {
     public class NRecord<T>
     {
@@ -89,7 +86,7 @@ namespace NCassette.Common
             return this;
         }
 
-        public NRecord<T> PleaseWorkInRealeseMode()
+        public NRecord<T> WorkInReleaseMode()
         {
             _canWorkInReleaseMode = true;
             return this;
