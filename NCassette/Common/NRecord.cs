@@ -6,13 +6,14 @@ using System.Reflection;
 using NCassetteLib.Exceptions;
 using NCassetteLib.Serialize;
 using NCassetteLib.Storage;
+using NCassetteLib.Storage.FileStorage;
 
 namespace NCassetteLib.Common
 {
     public class NRecord<T>
     {
         private readonly Func<T> _createFunction;
-        private ISerialize<T> _serialize;
+        private ISerialize<T> _serializer;
         private IStorage _storage;
         private readonly List<object> _dependsObjects;
         private int _numToExecute = 1;
@@ -20,6 +21,8 @@ namespace NCassetteLib.Common
         private Func<T, bool> _needToUpdateObject;
         private bool _canWorkInReleaseMode;
         private static DebuggableAttribute _debuggableAttribute;
+        private string _duplicateStorageKey;
+        private static object _locker = new object();
 
         static NRecord()
         {
@@ -39,19 +42,19 @@ namespace NCassetteLib.Common
 
         public NRecord<T> SerializeWay(ISerialize<T> serialize)
         {
-            _serialize = serialize;
+            _serializer = serialize;
             return this;
         }
 
         public NRecord<T> SerializeWayBinary()
         {
-            _serialize = new BinarySerializer<T>();
+            _serializer = new BinarySerializer<T>();
             return this;
         }
 
         public NRecord<T> SerializeWayJson()
         {
-            _serialize = new JsonSerializer<T>();
+            _serializer = new JsonSerializer<T>();
             return this;
         }
 
@@ -90,22 +93,39 @@ namespace NCassetteLib.Common
         {
             _canWorkInReleaseMode = true;
             return this;
-        } 
+        }
+
+        public NRecord<T> DuplicateStorageWithKey(string duplicateStorageKey)
+        {
+            _duplicateStorageKey = duplicateStorageKey;
+            return this;
+        }
+
+        public NRecord<T> StorageInFolder(string path)
+        {
+            _storage = new SpecificPathFileStorage(path);
+            return this;
+        }
 
         public T Execute()
         {
             CheckMinimalRequirements();
-            CheckDebugMode();
-            var mainName = string.Format("{0}.{1}.{2}", _createFunction.Method.DeclaringType.FullName, _createFunction.Method.Name, _serialize.GetType().ToString());
+            if (CheckDebugMode())
+                return _createFunction();
+            var mainName = string.Format("{0}.{1}.{2}", _createFunction.Method.DeclaringType.FullName, _createFunction.Method.Name, _serializer.GetType().ToString());
             var line = _dependsObjects.Aggregate(mainName, (acc, item) => acc + item.ToString());
             var hash = Hash.CalculateHash(line);
-            var data = _storage.GetFromStorage(hash);
+            byte[] data = null;
+            lock (_locker)
+            {
+                data = _storage.GetFromStorage(hash);
+            }
             bool needToReturnObject = true;
             if (data != null)
             {
                 try
                 {
-                    var store = _serialize.Deserialize(data);
+                    var store = _serializer.Deserialize(data);
                     if (_needToUpdateObject != null)
                     {
                         if (_needToUpdateObject(store))
@@ -141,26 +161,33 @@ namespace NCassetteLib.Common
             if (lastException != null)
                 throw lastException;
 
-            var binData = _serialize.Serialize(result);
-            _storage.PutIntoStorage(binData, hash);
+            var binData = _serializer.Serialize(result);
+            lock (_locker)
+            {
+                _storage.PutIntoStorage(binData, hash);
+                if (_duplicateStorageKey != null)
+                {
+                    _storage.PutIntoStorage(binData, _duplicateStorageKey);
+                }
+            }
             return result;
         }
 
-        private void CheckDebugMode()
+        private bool CheckDebugMode()
         {
             if (_debuggableAttribute != null)
             {
-                if(_debuggableAttribute.IsJITTrackingEnabled)
-                    return;
-                if(!_debuggableAttribute.IsJITTrackingEnabled && _canWorkInReleaseMode)
-                    return;
+                if (_debuggableAttribute.IsJITOptimizerDisabled)
+                    return false;
+                if (!_debuggableAttribute.IsJITOptimizerDisabled && _canWorkInReleaseMode)
+                    return false;
             }
-            throw new WorkInReleaseModeException("You use NCassette in Realese assembly without explicit permisions");
+            return true;
         }
 
         private void CheckMinimalRequirements()
         {
-            if (_serialize == null)
+            if (_serializer == null)
             {
                 throw new NCassetteConfigureException("You need to set serialization way in NCassette it's required");
             }

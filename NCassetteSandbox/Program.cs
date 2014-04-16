@@ -22,13 +22,27 @@ namespace NCassetteSandbox
             {
                 //some very heavy manipulation here
                 var networkRespone = NetworkResponse();
-                var someClass = new CustomClass {SomeStringProperty = networkRespone};
+                var someClass = new CustomClass { SomeStringProperty = networkRespone };
                 return someClass;
             })
                 .SerializeWayJson()
                 .WorkInReleaseMode()
                 .DependsOn(url)
                 .StorageInTempFiles()
+                .Execute();
+
+
+            result = NCassette.Record(() =>
+            {
+                //some very heavy manipulation here
+                var networkRespone = NetworkResponse();
+                var someClass = new CustomClass { SomeStringProperty = networkRespone };
+                return someClass;
+            })
+                .SerializeWayJson()
+                .DependsOn(url)
+                .DuplicateStorageWithKey(string.Format("{0}.html", new Uri(url).Host))
+                .StorageInFolder("CacheData")
                 .Execute();
 
             Console.WriteLine("{0}", result.SomeStringProperty);
