@@ -161,6 +161,11 @@ namespace NCassetteLib.Common
             if (lastException != null)
                 throw lastException;
 
+            if (!typeof(T).IsValueType && result == null)
+            {
+                return default(T);
+            }
+
             var binData = _serializer.Serialize(result);
             lock (_locker)
             {
