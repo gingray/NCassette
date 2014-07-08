@@ -29,6 +29,7 @@ namespace NCassetteSandbox
                 .WorkInReleaseMode()
                 .DependsOn(url)
                 .StorageInTempFiles()
+                .SetLifeTime((obj, lastModDate) => lastModDate.HasValue && lastModDate.Value.AddDays(1) < DateTime.Now)
                 .Execute();
 
 

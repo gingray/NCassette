@@ -30,5 +30,15 @@ namespace NCassetteLib.Storage.FileStorage
             var filename = Path.Combine(_folder, id);
             File.WriteAllBytes(filename, data);
         }
+
+        public DateTime? LastChangedDate(string id)
+        {
+            var filename = Path.Combine(_folder, id);
+            if (!File.Exists(filename))
+            {
+                return null;
+            }
+            return File.GetLastWriteTime(filename);
+        }
     }
 }

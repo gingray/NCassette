@@ -18,7 +18,7 @@ namespace NCassetteLib.Common
         private readonly List<object> _dependsObjects;
         private int _numToExecute = 1;
         private Action<Exception> _callbackOnFailExecution;
-        private Func<T, bool> _needToUpdateObject;
+        private Func<T, DateTime?, bool> _needToUpdateObject;
         private bool _canWorkInReleaseMode;
         private static DebuggableAttribute _debuggableAttribute;
         private string _duplicateStorageKey;
@@ -83,7 +83,7 @@ namespace NCassetteLib.Common
             return this;
         }
 
-        public NRecord<T> SetLifeTime(Func<T, bool> needToUpdateObject)
+        public NRecord<T> SetLifeTime(Func<T,DateTime?, bool> needToUpdateObject)
         {
             _needToUpdateObject = needToUpdateObject;
             return this;
@@ -128,7 +128,7 @@ namespace NCassetteLib.Common
                     var store = _serializer.Deserialize(data);
                     if (_needToUpdateObject != null)
                     {
-                        if (_needToUpdateObject(store))
+                        if (_needToUpdateObject(store,_storage.LastChangedDate(hash)))
                         {
                             needToReturnObject = false;
                         }
